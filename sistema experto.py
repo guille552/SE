@@ -33,6 +33,7 @@ def inferir_diagnostico(hechos):
 # Crear la interfaz gráfica de usuario
 ventana = tk.Tk()
 
+
 # Agregar un título a la ventana
 ventana.title("Sistema experto médico")
 
