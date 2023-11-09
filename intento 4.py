@@ -6,14 +6,16 @@ base_de_hechos = {}
 
 # Lista de Factores de Riesgo con Síntomas
 factores_riesgo = {
+    "Ninguno":"",
     "Obesidad": "Aumento de peso, Dificultad para moverse",
     "Anorexia": "Pérdida de peso, Debilidad"
+    
 }
 
 # Lista de Adicciones
-adicciones = ["Alcoholismo", "Tabaquismo", "Drogadicción"]
+adicciones = ["Ninguno", "Alcoholismo", "Tabaquismo", "Drogadicción"]
 
-# Función para guardar factores de riesgo seleccionados en la base de hechos
+# Función para guardar factores de riesgo y otros datos en la base de hechos
 def guardar_factores_riesgo():
     # Se guarda cada síntoma y su valor en la base de hechos
     base_de_hechos["fiebre"] = cuadro_fiebre.get().lower() == "si"
@@ -34,21 +36,44 @@ def guardar_factores_riesgo():
         combo_factores_riesgo2.set("Ninguno")
 
     # Se obtienen las adicciones seleccionadas
-    adicciones_seleccionadas = combo_adicciones.get()
-    base_de_hechos["adicciones"] = adicciones_seleccionadas
+    if combo_adicciones.winfo_ismapped():
+        adicciones_seleccionadas = combo_adicciones.get()
+        base_de_hechos["adicciones"] = adicciones_seleccionadas
     
+    # Se guarda la edad
+    base_de_hechos["edad"] = int(combo_edad.get())
+
     # Se imprime la base de hechos actualizada
     print(f"Hechos guardados en la base de hechos: {base_de_hechos}")
 
-# Base de Conocimientos (Knowledge Base)
+# Base de Conocimientos
 def reglas_inferencia(hechos):
-    if hechos["factores_riesgo"]:
-        if "Obesidad" in hechos["factores_riesgo"] and hechos["fiebre"] and hechos["dificultad_respirar"]:
-            return "Posible Neumonía"
-        elif "Anorexia" in hechos["factores_riesgo"] and hechos["dolor_cabeza"] and hechos["vomito"]:
-            return "Posible Gastroenteritis"
-
-    return "No se puede determinar el diagnóstico"
+    if "Obesidad" in hechos["factores_riesgo"] and hechos.get("fiebre") and hechos.get("dificultad_respirar"):
+        return "Posible diagnóstico: Neumonía"
+    elif "Anorexia" in hechos["factores_riesgo"] and hechos.get("dolor_cabeza") and hechos.get("vomito"):
+        return "Posible diagnóstico: Gastroenteritis"
+    elif hechos["edad"] >= 60 and hechos.get("dificultad_respirar"):
+        return "Posible diagnóstico: Neumonía en Adulto Mayor"
+    elif "Asma" in hechos["enfermedades"] and hechos.get("dificultad_respirar"):
+        return "Posible diagnóstico: Ataque de Asma"
+    elif hechos.get("fiebre") and hechos.get("tos"):
+        return "Posible diagnóstico: Gripe"
+    elif hechos.get("fiebre") and hechos.get("dolor_cabeza"):
+        return "Posible diagnóstico: Influenza"
+    elif hechos.get("fiebre") and hechos.get("dificultad_respirar"):
+        return "Posible diagnóstico: Neumonía"
+    elif hechos.get("diarrea") and hechos.get("vomito"):
+        return "Posible diagnóstico: Gastroenteritis"
+    elif hechos.get("fiebre") and hechos.get("congestion_nasal"):
+        return "Posible diagnóstico: Resfriado Común"
+    elif hechos.get("fiebre_alta") and hechos.get("dolor_muscular"):
+        return "Posible diagnóstico: Dengue"
+    elif hechos.get("dificultad_para_respirar") and hechos.get("sibilancias"):
+        return "Posible diagnóstico: Ataque de Asma"
+    elif hechos.get("fiebre") and hechos.get("dolor_abdominal"):
+        return "Posible diagnóstico: Infección Intestinal"
+    else:
+        return "No se puede determinar el diagnóstico"
 
 # Motor de Inferencia (Inference Engine)
 def inferir_diagnostico():
@@ -60,7 +85,8 @@ def inferir_diagnostico():
         "diarrea": base_de_hechos.get("diarrea", False),
         "vomito": base_de_hechos.get("vomito", False),
         "factores_riesgo": base_de_hechos.get("factores_riesgo", []),
-        "adicciones": base_de_hechos.get("adicciones", [])
+        "adicciones": base_de_hechos.get("adicciones", []),
+        "edad": base_de_hechos.get("edad", 0)
     }
 
     diagnostico = reglas_inferencia(hechos)
@@ -74,13 +100,20 @@ ventana.title("Sistema experto médico para la detección de enfermedades")
 ventana.config(width=600, height=600)
 
 # Interfaz de Usuario
+
+etiqueta_sintomas = ttk.Label(ventana, text="Síntomas:")
+etiqueta_sintomas.pack()
+
+etiqueta_sintomas = ttk.Label(ventana, text="")
+etiqueta_sintomas.pack()
+
 etiqueta_edad = ttk.Label(ventana, text="Edad:")
 etiqueta_edad.pack()
 
 combo_edad = ttk.Combobox(ventana, values=list(range(10, 70)), state="readonly")
 combo_edad.pack()
 
-etiqueta_sintomas = ttk.Label(ventana, text="Síntomas:")
+etiqueta_sintomas = ttk.Label(ventana, text="")
 etiqueta_sintomas.pack()
 
 cuadro_fiebre = ttk.Entry(ventana)
@@ -128,12 +161,11 @@ etiqueta_adicciones = ttk.Label(ventana, text="Adicciones:")
 etiqueta_adicciones.pack()
 
 # Combo box de adicciones
-if combo_edad.get() and int(combo_edad.get()) > 14:
-    combo_adicciones = ttk.Combobox(ventana, values=adicciones, state="readonly")
-    combo_adicciones.pack()
+combo_adicciones = ttk.Combobox(ventana, values=adicciones, state="readonly")
+combo_adicciones.pack()
 
 # Botón para Guardar Factores de Riesgo
-boton_guardar_factores_riesgo = ttk.Button(ventana, text="Guardar en la base de hechos", command=guardar_factores_riesgo)
+boton_guardar_factores_riesgo = ttk.Button(ventana, text="Guardar sintomas", command=guardar_factores_riesgo)
 boton_guardar_factores_riesgo.pack()
 
 # Botón para Consultar Diagnóstico

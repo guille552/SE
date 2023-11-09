@@ -6,7 +6,15 @@ base_de_hechos = {}
 
 # Base de Conocimientos (Knowledge Base)
 def reglas_inferencia(hechos):
-    if hechos.get("fiebre") and hechos.get("tos"):
+    if "Obesidad" in hechos["factores_riesgo"] and hechos.get("fiebre") and hechos.get("dificultad_respirar"):
+        return "Posible diagnóstico: Neumonía"
+    elif "Anorexia" in hechos["factores_riesgo"] and hechos.get("dolor_cabeza") and hechos.get("vomito"):
+        return "Posible diagnóstico: Gastroenteritis"
+    elif hechos["edad"] >= 60 and hechos.get("dificultad_respirar"):
+        return "Posible diagnóstico: Neumonía en Adulto Mayor"
+    elif "Asma" in hechos["enfermedades"] and hechos.get("dificultad_respirar"):
+        return "Posible diagnóstico: Ataque de Asma"
+    elif hechos.get("fiebre") and hechos.get("tos"):
         return "Posible diagnóstico: Gripe"
     elif hechos.get("fiebre") and hechos.get("dolor_cabeza"):
         return "Posible diagnóstico: Influenza"
@@ -14,8 +22,17 @@ def reglas_inferencia(hechos):
         return "Posible diagnóstico: Neumonía"
     elif hechos.get("diarrea") and hechos.get("vomito"):
         return "Posible diagnóstico: Gastroenteritis"
+    elif hechos.get("fiebre") and hechos.get("congestion_nasal"):
+        return "Posible diagnóstico: Resfriado Común"
+    elif hechos.get("fiebre_alta") and hechos.get("dolor_muscular"):
+        return "Posible diagnóstico: Dengue"
+    elif hechos.get("dificultad_para_respirar") and hechos.get("sibilancias"):
+        return "Posible diagnóstico: Ataque de Asma"
+    elif hechos.get("fiebre") and hechos.get("dolor_abdominal"):
+        return "Posible diagnóstico: Infección Intestinal"
     else:
         return "No se puede determinar el diagnóstico"
+
 
 # Motor de Inferencia (Inference Engine)
 def inferir_diagnostico():
