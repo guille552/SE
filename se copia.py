@@ -6,10 +6,9 @@ base_de_hechos = {}
 
 # Lista de Factores de Riesgo con Síntomas
 factores_riesgo = {
-    "Ninguno":"",
+    "Ninguno": "",
     "Obesidad": "Aumento de peso, Dificultad para moverse",
     "Anorexia": "Pérdida de peso, Debilidad"
-    
 }
 
 # Lista de Adicciones
@@ -54,8 +53,6 @@ def reglas_inferencia(hechos):
         return "Posible diagnóstico: Gastroenteritis"
     elif hechos["edad"] >= 60 and hechos.get("dificultad_respirar"):
         return "Posible diagnóstico: Neumonía en Adulto Mayor"
-    elif "Asma" in hechos["enfermedades"] and hechos.get("dificultad_respirar"):
-        return "Posible diagnóstico: Ataque de Asma"
     elif hechos.get("fiebre") and hechos.get("tos"):
         return "Posible diagnóstico: Gripe"
     elif hechos.get("fiebre") and hechos.get("dolor_cabeza"):
@@ -165,7 +162,7 @@ combo_adicciones = ttk.Combobox(ventana, values=adicciones, state="readonly")
 combo_adicciones.pack()
 
 # Botón para Guardar Factores de Riesgo
-boton_guardar_factores_riesgo = ttk.Button(ventana, text="Guardar sintomas", command=guardar_factores_riesgo)
+boton_guardar_factores_riesgo = ttk.Button(ventana, text="Guardar síntomas", command=guardar_factores_riesgo)
 boton_guardar_factores_riesgo.pack()
 
 # Botón para Consultar Diagnóstico
