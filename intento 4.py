@@ -41,6 +41,7 @@ def guardar_factores_riesgo():
     print(f"Hechos guardados en la base de hechos: {base_de_hechos}")
 
 def mostrar_interfaz_usuario():
+    
     etiqueta_sintomas = ttk.Label(ventana, text="Síntomas:")
     etiqueta_sintomas.pack()
 
@@ -79,9 +80,6 @@ def mostrar_interfaz_usuario():
     global combo_factores_riesgo, combo_factores_riesgo2
     combo_factores_riesgo = ttk.Combobox(ventana, values=list(factores_riesgo.keys()), state="readonly")
     combo_factores_riesgo.pack()
-
-    combo_factores_riesgo2 = ttk.Combobox(ventana, values=list(factores_riesgo.keys()), state="readonly")
-    combo_factores_riesgo2.pack()
 
     etiqueta_adicciones = ttk.Label(ventana, text="Adicciones:")
     etiqueta_adicciones.pack()
