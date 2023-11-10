@@ -37,25 +37,25 @@ def guardar_factores_riesgo():
 # Base de Conocimientos
 def reglas_inferencia(hechos):
     if "Desórdenes Alimenticios" in hechos["factores_riesgo"] and hechos.get("dolor_cabeza") and hechos.get("vomito"):
-        return "Posible diagnóstico: Gastroenteritis"
+        return "Gastroenteritis"
     elif "Adicciones" in hechos["factores_riesgo"] and hechos.get("adicciones"):
-        return "Posible diagnóstico: Problemas relacionados con adicciones"
+        return "Problemas relacionados con adicciones"
     elif hechos.get("fiebre") and hechos.get("tos"):
-        return "Posible diagnóstico: Gripe"
+        return "Gripe"
     elif hechos.get("fiebre") and hechos.get("dolor_cabeza"):
-        return "Posible diagnóstico: Influenza"
+        return "influenza"
     elif hechos.get("fiebre") and hechos.get("dificultad_respirar"):
-        return "Posible diagnóstico: Neumonía"
+        return "Neumonía"
     elif hechos.get("diarrea") and hechos.get("vomito"):
-        return "Posible diagnóstico: Gastroenteritis"
+        return "Gastroenteritis"
     elif hechos.get("fiebre") and hechos.get("congestion_nasal"):
-        return "Posible diagnóstico: Resfriado Común"
-    elif hechos.get("fiebre_alta") and hechos.get("dolor_muscular"):
-        return "Posible diagnóstico: Dengue"
-    elif hechos.get("dificultad_para_respirar") and hechos.get("sibilancias"):
-        return "Posible diagnóstico: Ataque de Asma"
-    elif hechos.get("fiebre") and hechos.get("dolor_abdominal"):
-        return "Posible diagnóstico: Infección Intestinal"
+        return "Resfriado Común"
+    elif hechos.get("fiebre") and hechos.get("dolor_cabeza"):
+        return "Dengue"
+    elif hechos.get("dificultad_para_respirar") and hechos.get("tos"):
+        return "Ataque de Asma"
+    elif hechos.get("fiebre") and hechos.get("diarrea"):
+        return "Infección Intestinal"
     else:
         return "No se puede determinar el diagnóstico"
 
