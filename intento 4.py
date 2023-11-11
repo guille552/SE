@@ -1,12 +1,15 @@
+#librerias 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, PhotoImage, messagebox
 
 # Definir lista de opciones para el ComboBox de tiempo desde que se presentaron los síntomas
 opciones_tiempo_sintomas = ["1 día", "1 semana", "1 mes"]
 
+#----------------------------------------------------------------------------------#
 # Base de Hechos (Fact Base)
 base_de_hechos = {}
 
+#-----------------------------------------------------------------------------------#
 # Lista de Factores de Riesgo con Síntomas
 factores_riesgo = {
     "Ninguno": "",
@@ -14,6 +17,7 @@ factores_riesgo = {
     "Adicciones": "Consumo de sustancias adictivas",
 }
 
+#------------------------------------------------------------------------------------#
 # Función para guardar factores de riesgo y otros datos en la base de hechos
 def guardar_factores_riesgo():
     # Se guarda cada síntoma y su valor en la base de hechos
@@ -34,6 +38,71 @@ def guardar_factores_riesgo():
     # Se imprime la base de hechos actualizada
     print(f"Hechos guardados en la base de hechos: {base_de_hechos}")
 
+#---------------------------------------------------------------------------------------------------#
+# Función para abrir la ventana de adquisición de conocimiento
+def adquisicion_conocimiento():
+    ventana_adquisicion = tk.Toplevel(ventana)
+    ventana_adquisicion.title("Adquisición de Conocimiento")
+
+    # Agregar una etiqueta para el texto
+    etiqueta_texto = tk.Label(ventana_adquisicion, text="Por favor, ingrese los síntomas y factores de riesgo para agregar una nueva regla de inferencia:")
+    etiqueta_texto.pack(pady=10)
+
+    # Agregar un cuadro de texto para ingresar los síntomas
+    cuadro_sintomas = tk.Entry(ventana_adquisicion)
+    cuadro_sintomas.pack(pady=10)
+
+    # Agregar un cuadro de texto para ingresar los factores de riesgo
+    cuadro_factores_riesgo = tk.Entry(ventana_adquisicion)
+    cuadro_factores_riesgo.pack(pady=10)
+
+    # Agregar un botón para guardar la nueva regla de inferencia
+    def guardar_regla():
+        sintomas = cuadro_sintomas.get()
+        factores_riesgo = cuadro_factores_riesgo.get()
+        nueva_regla = f"if '{factores_riesgo}' in hechos['factores_riesgo'] and {sintomas}:\n    return 'Nuevo Diagnóstico'"
+        print(f"Se ha agregado la siguiente regla de inferencia:\n{nueva_regla}")
+        ventana_adquisicion.destroy()
+
+    boton_guardar = tk.Button(ventana_adquisicion, text="Guardar", command=guardar_regla)
+    boton_guardar.pack(pady=10)
+
+    # Agregar un botón para cancelar la adquisición de conocimiento
+    boton_cancelar = tk.Button(ventana_adquisicion, text="Cancelar", command=ventana_adquisicion.destroy)
+    boton_cancelar.pack(pady=10)
+
+#---------------------------------------------------------------------------------#
+# Función para mostrar el diagnóstico en una ventana emergente
+def mostrarDiagnostico(diagnostico, descripcion, rutaimagen):
+    ventana_diagnostico = tk.Toplevel(ventana)
+    ventana_diagnostico.title("Diagnóstico")
+
+    # Agregar una etiqueta para el texto
+    etiqueta_texto = tk.Label(ventana_diagnostico, text=diagnostico)
+    etiqueta_texto.pack(pady=10)
+    
+    # Agregar una etiqueta para el texto
+    etiqueta_descripcion = tk.Label(ventana_diagnostico, text=descripcion)
+    etiqueta_descripcion.pack(pady=10)
+  
+    # Cargar una imagen
+    imagen = PhotoImage(file=rutaimagen)  # Reemplaza con la ruta de tu propia imagen
+    etiqueta_imagen = tk.Label(ventana_diagnostico, image=imagen)
+    etiqueta_imagen.image = imagen
+    etiqueta_imagen.pack(pady=10)
+    
+    # Boton de cerrar
+    boton_cerrar = tk.Button(ventana_diagnostico, text="Cerrar", command=ventana_diagnostico.destroy)
+    boton_cerrar.pack(pady=10)
+    
+    # En caso que no exista un diagnóstico, abrir el modulo de adquisición de conocimiento
+   
+    if diagnostico == "No se puede determinar el diagnóstico":
+        messagebox.showinfo("No encontrado", "No se encontró un diagnóstico, se abrirá el módulo de adquisición de conocimiento")
+        boton_adquisicion = tk.Button(ventana_diagnostico, text="Adquisición de conocimiento", command=adquisicion_conocimiento)
+        boton_adquisicion.pack(pady=10)
+
+#-----------------------------------------------------------------------#
 # Base de Conocimientos
 def reglas_inferencia(hechos):
     if "Desórdenes Alimenticios" in hechos["factores_riesgo"] and hechos.get("dolor_cabeza") and hechos.get("vomito"):
@@ -58,7 +127,8 @@ def reglas_inferencia(hechos):
         return "Infección Intestinal"
     else:
         return "No se puede determinar el diagnóstico"
-
+    
+#-----------------------------------------------------------------------------------#
 # Motor de Inferencia (Inference Engine)
 def inferir_diagnostico():
     hechos = {
@@ -73,11 +143,15 @@ def inferir_diagnostico():
     }
 
     diagnostico = reglas_inferencia(hechos)
-    cuadro_diagnostico.config(text=f"El diagnóstico es: {diagnostico}")
+    #cuadro_diagnostico.config(text=f"El diagnóstico es: #{diagnostico}")
 
+    #mandar el diagnostico a una ventana emergente 
+    mostrarDiagnostico(diagnostico, "Agregar una descripcion", "Imagenes/{}.png".format(diagnostico))   
+
+#-----------------------------------------------------------------------#
 # Interfaz de Usuario
 ventana = tk.Tk()
-ventana.title("Sistema experto médico para la detección de enfermedades")
+ventana.title("Sistema Experto médico para la detección de enfermedades")
 
 # Centrar la ventana en la pantalla
 ancho_ventana = 550
@@ -88,6 +162,7 @@ x_ventana = (ancho_pantalla / 2) - (ancho_ventana / 2)
 y_ventana = (alto_pantalla / 2) - (alto_ventana / 2)
 ventana.geometry(f"{ancho_ventana}x{alto_ventana}+{int(x_ventana)}+{int(y_ventana)}")
 
+#---------------------------------------------------------------------------------------#
 # Marco para Edad y Factor de Riesgo
 marco_edad_riesgo = ttk.Frame(ventana, padding=(10, 5))
 marco_edad_riesgo.grid(row=0, column=0, columnspan=6, pady=(10, 0), sticky="w")
@@ -146,6 +221,7 @@ etiqueta_tiempo_sintomas.grid(row=0, column=0, columnspan=2, pady=(0, 10), stick
 combo_tiempo_sintomas = ttk.Combobox(marco_tiempo_sintomas, values=opciones_tiempo_sintomas, state="readonly")
 combo_tiempo_sintomas.grid(row=0, column=2, columnspan=2, pady=(0, 10), sticky="w")
 
+#-------------------------------------------------------------------------------------------------------
 # Marco para Botones
 marco_botones = ttk.Frame(ventana, padding=(10, 5))
 marco_botones.grid(row=3, column=0, columnspan=6, pady=(10, 0), sticky="w")
@@ -159,4 +235,4 @@ boton_consultar.grid(row=0, column=1, pady=(0, 10), padx=(10, 0), sticky="w")
 cuadro_diagnostico = ttk.Label(marco_botones, text="Bienvenido al sistema experto médico")
 cuadro_diagnostico.grid(row=0, column=2, columnspan=2, pady=(0, 10), padx=(10, 0), sticky="w")
 
-ventana.mainloop()
+ventana.mainloop() #iniciar los eventos 
